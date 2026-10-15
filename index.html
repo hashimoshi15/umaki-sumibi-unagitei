@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja" data-lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#24140b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="umakiちゃんと いっしょに、うなぎを捌いて 串を打ち、炭火で 白焼き・たれ焼きにして うな重に盛りつけるブラウザゲーム。ログイン不要・1回 約2分。">
+<title>umakiちゃんの 炭火うなぎ亭</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="style.css?v=0.4.0-202610151836">
+<script>
+  // before the game script: the page language (saved choice, else the browser's) so the loading
+  // screen and any load error already read in it
+  (function () {
+    var M = {
+      ja: ['炭をおこしています…', '読み込みに 時間がかかっています。通信を確かめて、ページを再読み込みしてね。', 'ゲームのファイルを 読み込めませんでした。ページを再読み込みしてね。'],
+      en: ['Lighting the charcoal…', 'Loading is taking a while. Check your connection and reload the page.', 'The game files could not be loaded. Please reload the page.'],
+      ko: ['숯불을 피우는 중…', '불러오는 데 시간이 걸리고 있어요. 통신을 확인하고 페이지를 새로고침해 주세요.', '게임 파일을 불러오지 못했어요. 페이지를 새로고침해 주세요.'],
+      'zh-Hans': ['正在生炭火…', '加载时间较长。请检查网络后重新加载页面。', '无法加载游戏文件。请重新加载页面。'],
+      'zh-Hant': ['正在升炭火…', '載入時間較長。請確認網路後重新載入頁面。', '無法載入遊戲檔案。請重新載入頁面。']
+    };
+    var l = '';
+    try { l = (JSON.parse(localStorage.getItem('umaki-unagitei:v1')) || {}).lang || ''; } catch (e) {}
+    if (!M[l]) {
+      var L = navigator.languages || [navigator.language || ''];
+      for (var i = 0; i < L.length && !M[l]; i++) {
+        var s = String(L[i] || '').toLowerCase();
+        if (s.indexOf('ja') === 0) l = 'ja';
+        else if (s.indexOf('ko') === 0) l = 'ko';
+        else if (s.indexOf('en') === 0) l = 'en';
+        else if (s.indexOf('zh') === 0) l = /hant|-tw|-hk|-mo/.test(s) ? 'zh-Hant' : 'zh-Hans';
+      }
+      if (!M[l]) l = 'en';
+    }
+    document.documentElement.lang = l;
+    document.documentElement.setAttribute('data-lang', l);
+    window.__bootLang = l;
+    window.__bootMsg = M[l];
+  })();
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl" data-i18n-aria="aria.gl"></canvas>
+  <div id="vig" aria-hidden="true"></div>
+  <canvas id="hud" aria-hidden="true"></canvas>
+
+  <!-- play HUD: steps top-centre, order top-left, pause/sound top-right -->
+  <div id="top" class="hud-ui" hidden>
+    <div id="order" hidden>
+      <div class="o-row"><small data-i18n="order.label"></small><b id="orderName"></b><em id="orderPlate"></em></div>
+      <span id="orderNote"></span>
+    </div>
+    <ol id="steps" data-i18n-aria="aria.steps">
+      <li data-k="0"><i>1</i><span data-i18n="chip.0"></span></li>
+      <li data-k="1"><i>2</i><span data-i18n="chip.1"></span></li>
+      <li data-k="2"><i>3</i><span data-i18n="chip.2"></span></li>
+      <li data-k="3"><i>4</i><span data-i18n="chip.3"></span></li>
+      <li data-k="4"><i>5</i><span data-i18n="chip.4"></span></li>
+    </ol>
+    <div id="topbtns">
+      <button id="soundBtn" class="icon" data-i18n-aria="aria.sound"></button>
+      <button id="pauseBtn" class="icon" data-i18n-aria="aria.pause"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.4" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.4" fill="currentColor"/></svg></button>
+    </div>
+  </div>
+
+  <!-- umakiちゃん and the guide bubble: bottom-left, never over the food -->
+  <div id="guide" class="hud-ui" hidden>
+    <img id="umaki" src="assets/umaki/idle.webp" data-i18n-alt="alt.umaki" alt="umaki" draggable="false">
+    <div id="bubble"><div id="fig" aria-hidden="true"></div><p id="say" aria-live="polite"></p></div>
+  </div>
+
+  <!-- meters and the step's buttons: right edge -->
+  <div id="side" class="hud-ui" hidden>
+    <div id="meter"></div>
+    <div id="actions"></div>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- title = entry: language, nickname, country / region, then start (nothing cooks before that) -->
+  <section id="title" class="screen" hidden>
+    <div class="title-panel">
+      <span class="seal" aria-hidden="true">鰻</span>
+      <div class="t-head">
+        <p class="pre" data-i18n="title.pre"></p>
+        <h1 data-i18n="title.h1"></h1>
+        <p class="lead" data-i18n-html="title.lead"></p>
+        <div class="title-foot">
+          <button id="titleSound" type="button" class="chip"></button>
+          <span data-i18n="title.foot"></span>
+        </div>
+        <p class="privacy" data-i18n="entry.privacy"></p>
+      </div>
+      <form id="entry" class="entry" novalidate autocomplete="off">
+        <label class="f-row" for="langSel"><span class="f-lb"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="2"/></svg><span data-i18n="entry.lang"></span></span>
+          <select id="langSel" class="field"></select></label>
+        <label class="f-row" for="nick"><span class="f-lb" data-i18n="entry.nick"></span>
+          <input id="nick" class="field" type="text" inputmode="text" autocomplete="nickname" autocapitalize="off" spellcheck="false" maxlength="48" enterkeyhint="done" data-i18n-ph="entry.nickPh" aria-describedby="entryErr"></label>
+        <div class="f-row"><span class="f-lb" id="countryLbl" data-i18n="entry.country"></span>
+          <button type="button" id="countryBtn" class="field pick" aria-haspopup="dialog" aria-labelledby="countryLbl countryVal" aria-describedby="entryErr"><span id="countryVal" class="ph"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <p id="entryErr" class="f-err" role="alert"></p>
+        <button id="startBtn" type="submit" class="btn big start" data-i18n="title.start"></button>
+        <div class="title-btns sub2">
+          <button id="howBtn" type="button" class="btn sub" data-i18n="title.how"></button>
+          <button id="challengeBtn" type="button" class="btn sub chal"><span class="chal-badge" data-i18n="title.chalBadge"></span><span data-i18n="title.chal"></span></button>
+        </div>
+      </form>
+    </div>
+    <img class="hero" src="assets/umaki/hero.webp" alt="" draggable="false">
+  </section>
+
+  <!-- country / region picker: every ISO 3166-1 entry, searchable, names in the display language -->
+  <section id="picker" class="screen" hidden role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+    <div class="card pick-card">
+      <div class="pick-head">
+        <h2 id="pickTitle" data-i18n="entry.country"></h2>
+        <button id="pickClose" type="button" class="chip" data-i18n="entry.close"></button>
+      </div>
+      <input id="pickSearch" class="field" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" data-i18n-ph="entry.search" data-i18n-aria="entry.search" aria-controls="pickList">
+      <ul id="pickList" role="listbox" aria-labelledby="pickTitle"></ul>
+      <p id="pickNone" class="pick-none" hidden data-i18n="entry.noMatch"></p>
+    </div>
+  </section>
+
+  <section id="howto" class="screen" hidden>
+    <div class="card how-card">
+      <h2 data-i18n="how.h2"></h2>
+      <p class="how-lead" data-i18n="how.lead"></p>
+      <ol class="how">
+        <li><div class="hf" data-fig="cut"></div><b><i>1</i><span data-i18n="chip.0"></span></b><span data-i18n-html="how.s0"></span></li>
+        <li><div class="hf" data-fig="skewer"></div><b><i>2</i><span data-i18n="chip.1"></span></b><span data-i18n-html="how.s1"></span></li>
+        <li><div class="hf" data-fig="white"></div><b><i>3</i><span data-i18n="chip.2"></span></b><span data-i18n-html="how.s2"></span></li>
+        <li><div class="hf" data-fig="tare"></div><b><i>4</i><span data-i18n="chip.3"></span></b><span data-i18n-html="how.s3"></span></li>
+        <li><div class="hf" data-fig="plate"></div><b><i>5</i><span data-i18n="chip.4"></span></b><span data-i18n-html="how.s4"></span></li>
+      </ol>
+      <div class="row">
+        <button id="howGo" class="btn big" data-i18n="how.go"></button>
+        <button id="howBack" class="btn sub" data-i18n="how.back"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="pause" class="screen" hidden>
+    <div class="card small">
+      <h2 id="pauseTitle" data-i18n="pause.title"></h2>
+      <p id="pauseNote"></p>
+      <button id="resumeBtn" class="btn big" data-i18n="pause.resume"></button>
+      <button id="fsBtn" class="btn sub fs" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="pause.fs"></span></button>
+      <div class="row">
+        <button id="restartBtn" class="btn sub" data-i18n="pause.restart"></button>
+        <button id="toTitleBtn" class="btn sub" data-i18n="pause.toTitle"></button>
+      </div>
+      <div class="sound-row">
+        <button id="muteBtn" class="chip"></button>
+        <label class="vol"><span data-i18n="pause.vol"></span><input id="vol" type="range" min="0" max="100" value="80" data-i18n-aria="pause.vol"></label>
+        <label class="lang-mini"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="2"/></svg><select id="langSel2" class="field" data-i18n-aria="entry.lang"></select></label>
+      </div>
+    </div>
+  </section>
+
+  <section id="rotate" class="screen" hidden>
+    <div class="rot">
+      <div class="rot-art">
+        <img src="assets/umaki/wow.webp" alt="" draggable="false">
+        <div class="phone" aria-hidden="true"><i></i></div>
+      </div>
+      <h2 data-i18n="rot.h2"></h2>
+      <p data-i18n-html="rot.p"></p>
+    </div>
+  </section>
+
+  <section id="result" class="screen" hidden>
+    <div class="res-panel">
+      <div class="res-head">
+        <span id="resOrder" class="tag"></span>
+        <span id="resPlate" class="tag plate" hidden></span>
+      </div>
+      <div class="stamp">
+        <small id="resWho" data-i18n="res.done"></small>
+        <b id="resTitle"></b>
+        <div class="score"><strong id="resScore"></strong><span id="resStars" aria-hidden="true"></span><span id="resBest" hidden></span></div>
+      </div>
+      <ul id="cats"></ul>
+      <div class="say-row"><img id="resUmaki" src="assets/umaki/happy.webp" alt="" draggable="false"><p><b data-i18n="res.good"></b><span id="resGood"></span></p></div>
+      <p class="tip"><b data-i18n="res.tip"></b><span id="resTip"></span></p>
+      <div id="resChal" hidden></div>
+      <div class="row">
+        <button id="nextBtn" class="btn big" hidden data-i18n="res.next"></button>
+        <button id="againBtn" class="btn big"></button>
+        <button id="resTitleBtn" class="btn sub" data-i18n="res.toTitle"></button>
+      </div>
+    </div>
+  </section>
+
+  <div id="loading">
+    <img src="assets/umaki/idle.webp" alt="" draggable="false">
+    <p id="loadMsg"></p>
+  </div>
+  <noscript><p class="nojs">このゲームを遊ぶには JavaScript を有効にしてください。<br>Please enable JavaScript to play.</p></noscript>
+</div>
+<script>
+  document.getElementById('loadMsg').textContent = window.__bootMsg[0];
+  // if the game script cannot be fetched or never starts, say so instead of waiting forever
+  window.__bootFail = function (why) {
+    var L = document.getElementById('loading');
+    if (window.unagi || window.__bootFailed || (L && L.classList.contains('error'))) return; // started, or already explained
+    if (why) window.__bootFailed = true; // keep the specific reason (file not loaded) over the later timeout text
+    var m = document.getElementById('loadMsg');
+    if (m) m.textContent = why || window.__bootMsg[1];
+  };
+  setTimeout(function () { window.__bootFail(); }, 20000);
+</script>
+<script src="game.js?v=0.4.0-202610151836" onerror="window.__bootFail(window.__bootMsg[2])"></script>
+</body>
+</html>
