@@ -1008,3 +1008,10 @@ html[data-lang='en'] #steps li { letter-spacing: 0; }
 .entry .sub2 .btn { white-space: normal; line-height: 1.15; text-align: center; padding-top: 4px; padding-bottom: 4px; }
 .entry .sub2 .btn { font-size: clamp(13px, calc(var(--u) * 2.9), 22px); letter-spacing: 0.02em; }
 .entry .sub2 .btn span { white-space: nowrap; }
+
+/* Keep every pause control visible after fullscreen exit on short landscape screens. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #pause .card { width: min(calc(100vw - 24px), 600px); gap: 6px; padding: 12px; max-height: calc(100vh - 16px); overflow-y: auto; }
+  #pause .card h2 { font-size: 20px; }
+  #pause .sound-row { gap: 8px; padding-top: 6px; }
+}

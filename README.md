@@ -5,7 +5,7 @@
 ログイン不要・インストール不要。スマホ（横向き）やパソコンのブラウザで、そのまま遊べます。
 No login, nothing to install: open the link in a phone (landscape) or desktop browser.
 
-- バージョン / Version: 0.4.0（build 0.4.0-202610151836）
+- バージョン / Version: 0.4.0（build 0.4.0-202610151836-p1）
 - 言語 / Languages: 日本語 · English · 한국어 · 简体中文 · 繁體中文（ブラウザの言語で始まり、タイトルで切り替えられます）
 - 1回 約2分 / about 2 minutes a round
 
@@ -47,5 +47,5 @@ The nickname and country / region stay in your browser on that device. Nothing i
 
 ## 試遊版の確認範囲とソース
 
-ビルド: `0.4.0-202610151836`。UE素材は未使用。実機iPhone/Android・音の聴感は未確認。
+ビルド: `0.4.0-202610151836-p1`。UE素材は未使用。実機iPhone/Android・音の聴感は未確認。
 編集可能な検証候補のソースは `source/`。`cd source && npm install && npm test && npm run build` で `outputs/unagi-web/` に再ビルドします。ビルド時刻は新しくなります。公開更新には検証後のビルドをリポジトリ直下へ反映します。開発中の次版の変更は含みません。
