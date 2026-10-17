@@ -8,6 +8,10 @@
 /* Kyoto eel shop: washi cream, dark keyaki brown, vermilion and black lacquer (like the jubako). */
 :root {
   --u: min(1vh, 0.5625vw);
+  /* the game's frame: the window, or the window turned on its side (an upright phone) — set by JS */
+  --vw: 100vw;
+  --vh: 100vh;
+  --pw: 100vw;
   --washi: #fffaf0;
   --cream: #f7ebd3;
   --cream2: #eedcb9;
@@ -111,7 +115,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
 }
 .btn.early.armed { outline: max(2px, calc(var(--u) * 0.5)) dashed var(--shu); outline-offset: 3px; }
 /* the 3D view: a soft frame so the eye stays on the food */
-#vig { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse 78% 74% at 50% 48%, transparent 58%, rgba(28, 12, 4, 0.34) 100%); }
+#vig { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse 80% 76% at 50% 46%, transparent 52%, rgba(16, 11, 8, 0.38) 100%); }
 .btn svg { width: 1.15em; height: 1.15em; flex: none; }
 .btn.ready::after {
   content: '';
@@ -463,7 +467,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
   font-weight: 900;
   letter-spacing: 0.04em;
   width: max-content;
-  max-width: min(calc(100vw - var(--l) - var(--r) - 24px), 720px);
+  max-width: min(calc(var(--vw) - var(--l) - var(--r) - 24px), 720px);
   text-align: center;
   opacity: 0;
   transform: translateX(-50%);
@@ -501,7 +505,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
   left: calc(var(--l) + var(--u) * 3);
   top: 50%;
   transform: translateY(-50%);
-  width: min(calc(100vw - var(--l) - var(--r) - var(--u) * 6), max(640px, calc(var(--u) * 112)));
+  width: min(calc(var(--vw) - var(--l) - var(--r) - var(--u) * 6), max(640px, calc(var(--u) * 112)));
   max-height: calc(100% - var(--u) * 3);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -567,7 +571,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
 .hero {
   position: absolute;
   bottom: calc(var(--b) + var(--u) * 1);
-  left: calc(var(--l) + var(--u) * 3 + min(44vw, calc(var(--u) * 78)) - var(--u) * 10);
+  left: calc(var(--l) + var(--u) * 3 + min(calc(var(--vw) * 0.44), calc(var(--u) * 78)) - var(--u) * 10);
   height: max(96px, calc(var(--u) * 30));
   pointer-events: none;
   transform-origin: 50% 100%;
@@ -584,7 +588,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
-.how-card { width: min(calc(100vw - var(--u) * 4 - var(--l) - var(--r)), calc(var(--u) * 168)); padding: calc(var(--u) * 3) calc(var(--u) * 3); }
+.how-card { width: min(calc(var(--vw) - var(--u) * 4 - var(--l) - var(--r)), calc(var(--u) * 168)); padding: calc(var(--u) * 3) calc(var(--u) * 3); }
 .how-card h2 { margin-bottom: calc(var(--u) * 0.4); }
 .how-lead { font-size: max(12px, calc(var(--u) * 3)); color: var(--ink2); margin-bottom: calc(var(--u) * 2.2); }
 .how {
@@ -622,7 +626,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
 .how span { font-size: max(10.5px, calc(var(--u) * 2.55)); line-height: 1.45; color: var(--ink2); }
 
 /* pause */
-#pause .card { width: min(calc(100vw - var(--u) * 4), max(300px, calc(var(--u) * 80))); display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 2.2); }
+#pause .card { width: min(calc(var(--vw) - var(--u) * 4), max(300px, calc(var(--u) * 80))); display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 2.2); }
 #pause .card h2 { margin: 0; }
 #pauseNote { font-size: max(12px, calc(var(--u) * 3)); color: var(--ink2); }
 #pause .row { width: 100%; }
@@ -693,7 +697,7 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
   right: calc(var(--r) + var(--u) * 2.4);
   top: 50%;
   transform: translateY(-50%);
-  width: min(52vw, max(330px, calc(var(--u) * 82)));
+  width: min(calc(var(--vw) * 0.52), max(330px, calc(var(--u) * 82)));
   max-height: calc(100% - var(--u) * 3);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -851,16 +855,15 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
 @keyframes rotphone { 0%, 20% { transform: rotate(0); } 55%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
 
 /* short landscape phones: tighten the panels a little */
-@media (max-height: 430px) {
-  .title-panel .lead { margin: calc(var(--u) * 1.4) 0 calc(var(--u) * 2); line-height: 1.5; }
-  .title-btns { margin-bottom: calc(var(--u) * 1.4); }
-  .how-lead { display: none; }
-  .res-panel { gap: calc(var(--u) * 0.9); padding-top: calc(var(--u) * 2); padding-bottom: calc(var(--u) * 2); }
-  .say-row img { display: none; }
-  .tip { padding-top: calc(var(--u) * 0.6); padding-bottom: calc(var(--u) * 0.6); }
-  #cats { gap: calc(var(--u) * 0.4); }
-  #cats li { padding-top: 1px; padding-bottom: 1px; }
-}
+html.h430 .title-panel .lead { margin: calc(var(--u) * 1.4) 0 calc(var(--u) * 2); line-height: 1.5; }
+html.h430 .title-btns { margin-bottom: calc(var(--u) * 1.4); }
+html.h430 .how-lead { display: none; }
+html.h430 .res-panel { gap: calc(var(--u) * 0.9); padding-top: calc(var(--u) * 2); padding-bottom: calc(var(--u) * 2); }
+html.h430 .say-row img { display: none; }
+html.h430 .tip { padding-top: calc(var(--u) * 0.6); padding-bottom: calc(var(--u) * 0.6); }
+html.h430 #cats { gap: calc(var(--u) * 0.4); }
+html.h430 #cats li { padding-top: 1px; padding-bottom: 1px; }
+
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
@@ -998,7 +1001,7 @@ html[data-lang='en'] #steps li { letter-spacing: 0; }
 .entry .sub2 .btn { min-height: max(42px, calc(var(--u) * 9)); font-size: max(14px, calc(var(--u) * 3.6)); padding: 0 max(10px, calc(var(--u) * 2)); min-width: 0; }
 .t-head .title-foot { margin-top: calc(var(--u) * 2); }
 .t-head .privacy { margin-top: calc(var(--u) * 1.2); }
-@media (max-height: 500px) and (orientation: landscape) { .seal { display: none; } }
+html.h500 .seal { display: none; }
 
 /* two-column entry: the shop name fits its column at every size */
 .title-panel h1 { font-size: clamp(30px, calc(var(--u) * 5.5), 52px); white-space: normal; }
@@ -1010,8 +1013,103 @@ html[data-lang='en'] #steps li { letter-spacing: 0; }
 .entry .sub2 .btn span { white-space: nowrap; }
 
 /* Keep every pause control visible after fullscreen exit on short landscape screens. */
-@media (orientation: landscape) and (max-height: 500px) {
-  #pause .card { width: min(calc(100vw - 24px), 600px); gap: 6px; padding: 12px; max-height: calc(100vh - 16px); overflow-y: auto; }
-  #pause .card h2 { font-size: 20px; }
-  #pause .sound-row { gap: 8px; padding-top: 6px; }
+html.h500 #pause .card { width: min(calc(var(--vw) - 24px), 600px); gap: 6px; padding: 12px; max-height: calc(var(--vh) - 16px); overflow-y: auto; }
+html.h500 #pause .card h2 { font-size: 20px; }
+html.h500 #pause .sound-row { gap: 8px; padding-top: 6px; }
+
+
+/* ---------- 盛り付け: the box fills the screen; the guide is a small caption at the top left ---------- */
+body[data-step='plate'] #steps, body[data-step='finish'] #steps { visibility: hidden; }
+body[data-step='plate'] #side { display: none; }
+body[data-step='plate'] #guide, body[data-step='finish'] #guide {
+  top: calc(var(--t) + var(--u) * 1.2);
+  bottom: auto;
+  left: calc(var(--l) + var(--u) * 1.4);
+  align-items: center;
+  max-width: calc(100% - var(--l) - var(--r) - var(--topH) * 2 - var(--u) * 10);
 }
+body[data-step='plate'] #umaki, body[data-step='finish'] #umaki { height: max(40px, calc(var(--u) * 10)); }
+body[data-step='plate'] #bubble, body[data-step='finish'] #bubble {
+  margin-bottom: 0;
+  min-height: 0;
+  padding: calc(var(--u) * 0.8) max(10px, calc(var(--u) * 2));
+}
+body[data-step='plate'] #bubble::before, body[data-step='finish'] #bubble::before { bottom: auto; top: 50%; margin-top: calc(max(10px, calc(var(--u) * 2.2)) / -2); }
+body[data-step='plate'] #fig, body[data-step='finish'] #fig { display: none; }
+body[data-step='plate'] #say, body[data-step='finish'] #say { font-size: max(12px, calc(var(--u) * 2.9)); }
+/* 仕上げ: the button sits over the emptied tray (left), clear of the box */
+body[data-step='finish'] #side { left: calc(var(--l) + var(--u) * 2); right: auto; top: auto; bottom: calc(var(--b) + var(--u) * 2.4); }
+body[data-step='finish'] #meter { display: none; }
+
+/* ↺ ↻ : bottom right, within the safe area; dim until a piece is held */
+#rotBtns {
+  right: calc(var(--r) + var(--u) * 2);
+  bottom: calc(var(--b) + var(--u) * 2.4);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 1.2);
+  padding: calc(var(--u) * 0.8);
+  border-radius: 99px;
+  background: rgba(36, 18, 8, 0.45);
+  pointer-events: none;   /* only the two buttons catch touches */
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+#rotBtns.live { opacity: 1; }
+#rotBtns .rotb { width: max(48px, calc(var(--u) * 11)); height: max(48px, calc(var(--u) * 11)); touch-action: none; pointer-events: auto; }
+#rotBtns .rot-lb { color: #fff3dc; font-size: max(11px, calc(var(--u) * 2.6)); font-weight: 900; white-space: nowrap; }
+
+/* a mouse cannot press ↺↻ while it holds a piece: the wheel / Q E turn it instead (said in the hint) */
+body.mouse #rotBtns { display: none; }
+/* the order card (challenge) would sit under the plating caption */
+body[data-step='plate'] #order, body[data-step='finish'] #order { display: none; }
+
+/* ---------- landscape is fixed: on an upright phone the whole game is drawn on its side ---------- */
+html.rotated #app { inset: auto; top: 0; left: 0; width: var(--vw); height: var(--vh); transform-origin: 0 0; transform: translateX(var(--pw)) rotate(90deg); }
+/* a tall desktop window (mouse): a landscape box across its width */
+html.boxed #app { inset: auto; top: var(--top); left: 0; width: var(--vw); height: var(--vh); }
+/* the notch and the home bar are then on the game's left and right */
+html.rotated { --l: env(safe-area-inset-top, 0px); --r: env(safe-area-inset-bottom, 0px); --t: env(safe-area-inset-right, 0px); --b: env(safe-area-inset-left, 0px); }
+
+/* ---------- the play tally (only when a collector is built in): an unticked agreement on the entry ---------- */
+.f-rec { display: grid; gap: max(2px, calc(var(--u) * 0.4)); }
+.f-rec[hidden] { display: none; }
+.rec-opt { display: flex; align-items: center; gap: max(8px, calc(var(--u) * 1.4)); font-size: max(13px, calc(var(--u) * 2.9)); font-weight: 900; color: var(--ink); cursor: pointer; min-height: 32px; }
+.rec-opt input { width: max(20px, calc(var(--u) * 4)); height: max(20px, calc(var(--u) * 4)); margin: 0; accent-color: var(--shu); flex: none; }
+.rec-note { margin: 0; font-size: max(10px, calc(var(--u) * 2.1)); line-height: 1.4; color: var(--ink2); font-weight: 700; opacity: 0.9; }
+.stamp .res-rec { grid-column: 1 / -1; letter-spacing: 0.04em; font-weight: 700; color: var(--ink2); }
+.stamp .res-rec[data-state='ok'] { color: #3d6b2a; }
+.stamp .res-rec[hidden] { display: none; }
+@media (orientation: portrait) {
+  .rec-opt { font-size: 15px; }
+  .rec-note { font-size: 11.5px; }
+}
+
+/* ---------- opened inside an app (LINE, Instagram…): how to open in Safari / the browser (advice only) ---------- */
+.title-panel.ia-on .lead { display: none; }   /* the tip takes the lead's place: スタート does not move down */
+.inapp { margin-top: calc(var(--u) * 1.6); border-radius: max(10px, calc(var(--u) * 2)); background: #fff4e2; border: max(2px, calc(var(--u) * 0.45)) solid var(--line); border-left: max(4px, calc(var(--u) * 0.9)) solid var(--shu); overflow: hidden; }
+.ia-head { display: flex; align-items: center; }
+.ia-tg { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 0.45em; min-height: 44px; padding: 4px 4px 4px max(8px, calc(var(--u) * 1.8)); background: none; text-align: left; line-height: 1.25; font-size: max(13.5px, calc(var(--u) * 2.9)); font-weight: 900; color: var(--shu-d); }
+.ia-tg span { min-width: 0; }
+.ia-tg > svg { flex: none; width: 1.35em; height: 1.35em; }
+.ia-tg .ia-chev { width: 1.05em; height: 1.05em; margin-left: auto; color: var(--ink2); transition: transform 0.15s; }
+.ia-tg[aria-expanded='true'] .ia-chev { transform: rotate(180deg); }
+.ia-x { flex: none; width: 44px; height: 44px; padding: 0; display: grid; place-items: center; background: none; color: var(--ink2); border-radius: 50%; }
+.ia-x svg { width: 16px; height: 16px; }
+.ia-tg:active, .ia-x:active { background: rgba(207, 68, 38, 0.08); }
+.ia-body { display: grid; gap: max(6px, calc(var(--u) * 1.1)); padding: 0 max(10px, calc(var(--u) * 2)) max(9px, calc(var(--u) * 1.6)); }
+.ia-steps { margin: 0; padding-left: 1.3em; font-size: max(12.5px, calc(var(--u) * 2.6)); line-height: 1.45; font-weight: 800; color: var(--ink); }
+.ia-steps li::marker { color: var(--shu); font-weight: 900; }
+.ia-copy { display: flex; align-items: center; gap: max(6px, calc(var(--u) * 1.1)); }
+.ia-url { flex: 1 1 auto; min-height: 42px; font-family: var(--font-sys, inherit); font-size: 16px; /* 16px: iPhone does not zoom on focus */ color: var(--ink2); text-overflow: ellipsis; -webkit-touch-callout: default; /* long press: the system Copy menu (html/body turn it off) */ }
+.ia-cp { flex: none; }
+.ia-cp.ok { background: #edf5e1; border-color: var(--matcha); color: #3f5d1d; }
+.ia-msg { font-size: max(12px, calc(var(--u) * 2.5)); font-weight: 900; color: var(--shu-d); }
+.ia-msg:empty { display: none; }
+.ia-note { font-size: max(11px, calc(var(--u) * 2.3)); font-weight: 700; line-height: 1.4; color: var(--ink2); }
+html.h500 .ia-steps { font-size: 12px; line-height: 1.35; }
+@media (orientation: portrait) { .inapp { margin-top: 10px; } .ia-tg { font-size: 15px; } .ia-steps { font-size: 13.5px; } .ia-note { font-size: 12px; } }
+
+/* the result's buttons stay in reach when the card has to scroll (very short screens, e.g. 568x320): the row
+   sticks to the bottom of the card over the text scrolling under it */
+.res-panel .row { position: sticky; bottom: calc(var(--u) * -2.6); z-index: 1; padding-top: calc(var(--u) * 1); padding-bottom: calc(var(--u) * 2.6); margin-bottom: calc(var(--u) * -2.6); background: linear-gradient(180deg, rgba(251, 243, 226, 0), var(--cream) 35%); }

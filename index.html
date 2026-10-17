@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<link rel="stylesheet" href="style.css?v=0.4.0-202610151836-p1">
+<link rel="stylesheet" href="style.css?v=0.6.1-202610170032">
 <script>
   // before the game script: the page language (saved choice, else the browser's) so the loading
   // screen and any load error already read in it
@@ -81,6 +81,13 @@
     <div id="actions"></div>
   </div>
 
+  <!-- 盛り付け: turn the piece held in the chopsticks (a second finger can press these while the first holds) -->
+  <div id="rotBtns" class="hud-ui" hidden>
+    <button id="rotL" class="icon rotb" data-i18n-aria="aria.rotL"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 6.4A7.6 7.6 0 1 1 4.6 13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M8.6 2.4V6.8H4.2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <span class="rot-lb" data-i18n="h.rotate"></span>
+    <button id="rotR" class="icon rotb" data-i18n-aria="aria.rotR"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.8 6.4A7.6 7.6 0 1 0 19.4 13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M15.4 2.4V6.8H19.8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+
   <div id="toast" role="status" aria-live="polite"></div>
 
   <!-- title = entry: language, nickname, country / region, then start (nothing cooks before that) -->
@@ -90,6 +97,26 @@
       <div class="t-head">
         <p class="pre" data-i18n="title.pre"></p>
         <h1 data-i18n="title.h1"></h1>
+        <!-- opened inside an app (LINE, Instagram…): how to open the game in Safari / the browser (ui.js setupInapp; advice only) -->
+        <aside id="inapp" class="inapp" hidden aria-labelledby="iaHead">
+          <div class="ia-head">
+            <button id="iaToggle" type="button" class="ia-tg" aria-expanded="false" aria-controls="iaBody">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.6 8.4l-2.2 5-5 2.2 2.2-5z" fill="currentColor"/></svg>
+              <span id="iaHead" data-i18n="inapp.hIos"></span>
+              <svg class="ia-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button id="iaX" type="button" class="ia-x" data-i18n-aria="inapp.hide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+          </div>
+          <div id="iaBody" class="ia-body" hidden>
+            <ol class="ia-steps"><li data-i18n="inapp.s1"></li><li id="iaS2" data-i18n="inapp.s2Ios"></li></ol>
+            <div class="ia-copy">
+              <input id="iaUrl" class="field ia-url" type="text" readonly value="https://hashimoshi15.github.io/umaki-sumibi-unagitei/" data-i18n-aria="inapp.url" spellcheck="false" autocomplete="off" autocapitalize="off">
+              <button id="iaCopy" type="button" class="chip ia-cp" data-i18n="inapp.copy"></button>
+            </div>
+            <p id="iaMsg" class="ia-msg" role="status" aria-live="polite"></p>
+            <p class="ia-note" data-i18n="inapp.note"></p>
+          </div>
+        </aside>
         <p class="lead" data-i18n-html="title.lead"></p>
         <div class="title-foot">
           <button id="titleSound" type="button" class="chip"></button>
@@ -104,6 +131,10 @@
           <input id="nick" class="field" type="text" inputmode="text" autocomplete="nickname" autocapitalize="off" spellcheck="false" maxlength="48" enterkeyhint="done" data-i18n-ph="entry.nickPh" aria-describedby="entryErr"></label>
         <div class="f-row"><span class="f-lb" id="countryLbl" data-i18n="entry.country"></span>
           <button type="button" id="countryBtn" class="field pick" aria-haspopup="dialog" aria-labelledby="countryLbl countryVal" aria-describedby="entryErr"><span id="countryVal" class="ph"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div id="recRow" class="f-rec" hidden>
+          <label class="rec-opt" for="recOpt"><input id="recOpt" type="checkbox"><span data-i18n="rec.opt"></span></label>
+          <p class="rec-note" data-i18n="rec.note"></p>
+        </div>
         <p id="entryErr" class="f-err" role="alert"></p>
         <button id="startBtn" type="submit" class="btn big start" data-i18n="title.start"></button>
         <div class="title-btns sub2">
@@ -183,6 +214,7 @@
       </div>
       <div class="stamp">
         <small id="resWho" data-i18n="res.done"></small>
+        <small id="resRec" class="res-rec" hidden></small>
         <b id="resTitle"></b>
         <div class="score"><strong id="resScore"></strong><span id="resStars" aria-hidden="true"></span><span id="resBest" hidden></span></div>
       </div>
@@ -216,6 +248,6 @@
   };
   setTimeout(function () { window.__bootFail(); }, 20000);
 </script>
-<script src="game.js?v=0.4.0-202610151836-p1" onerror="window.__bootFail(window.__bootMsg[2])"></script>
+<script src="game.js?v=0.6.1-202610170032" onerror="window.__bootFail(window.__bootMsg[2])"></script>
 </body>
 </html>
