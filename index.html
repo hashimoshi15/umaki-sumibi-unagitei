@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<link rel="stylesheet" href="style.css?v=0.6.1-202610170032">
+<link rel="stylesheet" href="style.css?v=0.7.0-202610180029">
 <script>
   // before the game script: the page language (saved choice, else the browser's) so the loading
   // screen and any load error already read in it
@@ -94,6 +94,8 @@
   <section id="title" class="screen" hidden>
     <div class="title-panel">
       <span class="seal" aria-hidden="true">鰻</span>
+      <!-- the language first, in each language's own script (readable without knowing Japanese); always shown -->
+      <div id="langBar" class="lang-bar" role="group" data-i18n-aria="entry.lang"></div>
       <div class="t-head">
         <p class="pre" data-i18n="title.pre"></p>
         <h1 data-i18n="title.h1"></h1>
@@ -125,12 +127,14 @@
         <p class="privacy" data-i18n="entry.privacy"></p>
       </div>
       <form id="entry" class="entry" novalidate autocomplete="off">
-        <label class="f-row" for="langSel"><span class="f-lb"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="2"/></svg><span data-i18n="entry.lang"></span></span>
-          <select id="langSel" class="field"></select></label>
         <label class="f-row" for="nick"><span class="f-lb" data-i18n="entry.nick"></span>
           <input id="nick" class="field" type="text" inputmode="text" autocomplete="nickname" autocapitalize="off" spellcheck="false" maxlength="48" enterkeyhint="done" data-i18n-ph="entry.nickPh" aria-describedby="entryErr"></label>
-        <div class="f-row"><span class="f-lb" id="countryLbl" data-i18n="entry.country"></span>
-          <button type="button" id="countryBtn" class="field pick" aria-haspopup="dialog" aria-labelledby="countryLbl countryVal" aria-describedby="entryErr"><span id="countryVal" class="ph"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <!-- country / region: five big choices and a small "other / prefer not to say" (independent of the language) -->
+        <div class="f-cty" role="group" aria-labelledby="countryLbl" aria-describedby="entryErr">
+          <div class="f-cty-head"><span class="f-lb" id="countryLbl" data-i18n="entry.country"></span>
+            <button type="button" id="ctyOther" class="cty-other" data-code="none" aria-pressed="false" data-i18n="entry.countryOther"></button></div>
+          <div id="ctyBar" class="cty-bar"></div>
+        </div>
         <div id="recRow" class="f-rec" hidden>
           <label class="rec-opt" for="recOpt"><input id="recOpt" type="checkbox"><span data-i18n="rec.opt"></span></label>
           <p class="rec-note" data-i18n="rec.note"></p>
@@ -146,18 +150,6 @@
     <img class="hero" src="assets/umaki/hero.webp" alt="" draggable="false">
   </section>
 
-  <!-- country / region picker: every ISO 3166-1 entry, searchable, names in the display language -->
-  <section id="picker" class="screen" hidden role="dialog" aria-modal="true" aria-labelledby="pickTitle">
-    <div class="card pick-card">
-      <div class="pick-head">
-        <h2 id="pickTitle" data-i18n="entry.country"></h2>
-        <button id="pickClose" type="button" class="chip" data-i18n="entry.close"></button>
-      </div>
-      <input id="pickSearch" class="field" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" data-i18n-ph="entry.search" data-i18n-aria="entry.search" aria-controls="pickList">
-      <ul id="pickList" role="listbox" aria-labelledby="pickTitle"></ul>
-      <p id="pickNone" class="pick-none" hidden data-i18n="entry.noMatch"></p>
-    </div>
-  </section>
 
   <section id="howto" class="screen" hidden>
     <div class="card how-card">
@@ -208,6 +200,9 @@
 
   <section id="result" class="screen" hidden>
     <div class="res-panel">
+      <!-- the card's text scrolls on its own above the buttons (never under them); a small つづき cue shows while
+           there is more below -->
+      <div id="resBody" class="res-body">
       <div class="res-head">
         <span id="resOrder" class="tag"></span>
         <span id="resPlate" class="tag plate" hidden></span>
@@ -219,9 +214,13 @@
         <div class="score"><strong id="resScore"></strong><span id="resStars" aria-hidden="true"></span><span id="resBest" hidden></span></div>
       </div>
       <ul id="cats"></ul>
+      <!-- the player's own timing: time on the coals for 白焼き and たれ焼き, and how that moment turned out -->
+      <p id="resTime" class="res-time"></p>
       <div class="say-row"><img id="resUmaki" src="assets/umaki/happy.webp" alt="" draggable="false"><p><b data-i18n="res.good"></b><span id="resGood"></span></p></div>
       <p class="tip"><b data-i18n="res.tip"></b><span id="resTip"></span></p>
       <div id="resChal" hidden></div>
+      </div>
+      <button id="resMore" type="button" class="res-more" hidden data-i18n-aria="res.moreAria"><span data-i18n="res.more"></span></button>
       <div class="row">
         <button id="nextBtn" class="btn big" hidden data-i18n="res.next"></button>
         <button id="againBtn" class="btn big"></button>
@@ -248,6 +247,6 @@
   };
   setTimeout(function () { window.__bootFail(); }, 20000);
 </script>
-<script src="game.js?v=0.6.1-202610170032" onerror="window.__bootFail(window.__bootMsg[2])"></script>
+<script src="game.js?v=0.7.0-202610180029" onerror="window.__bootFail(window.__bootMsg[2])"></script>
 </body>
 </html>

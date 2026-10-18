@@ -106,14 +106,6 @@ button:focus-visible { outline: max(3px, calc(var(--u) * 0.7)) solid #ffcf6b; ou
 }
 .btn.sub:active { box-shadow: 0 max(1px, calc(var(--u) * 0.2)) 0 #c3a275, 0 calc(var(--u) * 0.6) calc(var(--u) * 1.2) rgba(40, 20, 6, 0.24); }
 .btn[disabled] { filter: grayscale(0.75) brightness(1.06); opacity: 0.5; pointer-events: none; }
-/* may be pressed but it is early: quiet cream with vermilion letters; armed after a first press */
-.btn.early {
-  background: linear-gradient(180deg, #fffdf7, #f2e3c5);
-  color: var(--shu-d);
-  border-color: #fff;
-  box-shadow: 0 max(3px, calc(var(--u) * 0.9)) 0 #c3a275, 0 calc(var(--u) * 1.4) calc(var(--u) * 2.4) rgba(40, 20, 6, 0.28);
-}
-.btn.early.armed { outline: max(2px, calc(var(--u) * 0.5)) dashed var(--shu); outline-offset: 3px; }
 /* the 3D view: a soft frame so the eye stays on the food */
 #vig { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse 80% 76% at 50% 46%, transparent 52%, rgba(16, 11, 8, 0.38) 100%); }
 .btn svg { width: 1.15em; height: 1.15em; flex: none; }
@@ -1020,7 +1012,12 @@ html.h500 #pause .sound-row { gap: 8px; padding-top: 6px; }
 
 /* ---------- 盛り付け: the box fills the screen; the guide is a small caption at the top left ---------- */
 body[data-step='plate'] #steps, body[data-step='finish'] #steps { visibility: hidden; }
-body[data-step='plate'] #side { display: none; }
+/* while plating: only a compact 仕上げ at the top right, next to the sound / pause buttons (clear of the tray,
+   the box and ↺↻), so the plate can be declared done at any time; the big one comes back over the emptied tray */
+body[data-step='plate'] #side { left: auto; right: calc(var(--r) + var(--u) * 6 + var(--topH) * 2); top: calc(var(--t) + var(--u) * 1.6); bottom: auto; width: auto; }
+body[data-step='plate'] #meter { display: none; }
+body[data-step='plate'] #actions { margin-top: 0; }
+body[data-step='plate'] #actions .btn.big { min-height: var(--topH); width: auto; padding: 0 max(12px, calc(var(--u) * 3)); font-size: max(14px, calc(var(--u) * 3.6)); }
 body[data-step='plate'] #guide, body[data-step='finish'] #guide {
   top: calc(var(--t) + var(--u) * 1.2);
   bottom: auto;
@@ -1028,6 +1025,7 @@ body[data-step='plate'] #guide, body[data-step='finish'] #guide {
   align-items: center;
   max-width: calc(100% - var(--l) - var(--r) - var(--topH) * 2 - var(--u) * 10);
 }
+body[data-step='plate'] #guide { max-width: calc(100% - var(--l) - var(--r) - var(--topH) * 2 - var(--u) * 14 - max(120px, calc(var(--u) * 27))); }
 body[data-step='plate'] #umaki, body[data-step='finish'] #umaki { height: max(40px, calc(var(--u) * 10)); }
 body[data-step='plate'] #bubble, body[data-step='finish'] #bubble {
   margin-bottom: 0;
@@ -1110,6 +1108,72 @@ html.rotated { --l: env(safe-area-inset-top, 0px); --r: env(safe-area-inset-bott
 html.h500 .ia-steps { font-size: 12px; line-height: 1.35; }
 @media (orientation: portrait) { .inapp { margin-top: 10px; } .ia-tg { font-size: 15px; } .ia-steps { font-size: 13.5px; } .ia-note { font-size: 12px; } }
 
-/* the result's buttons stay in reach when the card has to scroll (very short screens, e.g. 568x320): the row
-   sticks to the bottom of the card over the text scrolling under it */
-.res-panel .row { position: sticky; bottom: calc(var(--u) * -2.6); z-index: 1; padding-top: calc(var(--u) * 1); padding-bottom: calc(var(--u) * 2.6); margin-bottom: calc(var(--u) * -2.6); background: linear-gradient(180deg, rgba(251, 243, 226, 0), var(--cream) 35%); }
+/* the result's buttons stay in reach when the card is taller than the screen (short landscape phones): the text
+   scrolls in its own area above them (never under them, so the last line of the advice can always be read), and a
+   small つづき ▼ cue shows while there is more below (tap it to scroll to the end) */
+.res-panel { overflow: hidden; }
+.res-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: inherit; margin: 0 calc(var(--u) * -1); padding: 0 calc(var(--u) * 1) calc(var(--u) * 0.4); }
+.res-body > * { flex: none; }
+.res-panel .row { flex: none; }
+.res-panel.more .res-body { -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - max(22px, calc(var(--u) * 5))), transparent); mask-image: linear-gradient(180deg, #000 calc(100% - max(22px, calc(var(--u) * 5))), transparent); }
+.res-more { flex: none; align-self: center; margin: calc(var(--u) * -1.2) 0 0; padding: 2px max(12px, calc(var(--u) * 2.6)); min-height: max(28px, calc(var(--u) * 6)); border: 0; border-radius: 99px; background: rgba(150, 40, 20, 0.1); color: var(--shu-d); font: inherit; font-weight: 900; font-size: max(12px, calc(var(--u) * 2.7)); cursor: pointer; }
+.res-more[hidden] { display: none; }
+
+/* ---------- 0.7 entry: the language bar (top of the panel, all five always shown) and the country choices ---------- */
+.lang-bar { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: calc(var(--u) * 1.2); margin-right: max(30px, calc(var(--u) * 8)); }
+.lang-bar button, .cty-bar button {
+  min-width: 0;
+  min-height: max(40px, calc(var(--u) * 8.2));
+  padding: 0 4px;
+  border-radius: max(10px, calc(var(--u) * 2));
+  border: max(2px, calc(var(--u) * 0.45)) solid var(--line);
+  background: #fffdf8;
+  color: var(--ink);
+  font: inherit;
+  font-family: var(--font-sys, inherit);
+  font-size: max(15px, calc(var(--u) * 3.3));
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.lang-bar button[aria-pressed='true'], .cty-bar button[aria-pressed='true'] { background: var(--shu); border-color: var(--shu-d); color: #fff8ec; box-shadow: 0 2px 0 var(--shu-d); }
+.lang-bar button:focus-visible, .cty-bar button:focus-visible, .cty-other:focus-visible { outline: max(3px, calc(var(--u) * 0.6)) solid #ffcf6b; outline-offset: 1px; }
+.f-cty { display: flex; flex-direction: column; gap: calc(var(--u) * 0.8); min-width: 0; }
+.f-cty-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.cty-bar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: calc(var(--u) * 1); }
+.cty-bar button { font-size: max(13px, calc(var(--u) * 2.3)); padding: 0 2px; }
+.cty-bar[aria-invalid='true'] button { border-color: var(--shu); background: #fff3ee; }
+.cty-other { background: none; border: 0; padding: 2px 2px; font: inherit; font-family: var(--font-sys, inherit); font-size: max(12px, calc(var(--u) * 2.6)); font-weight: 800; color: var(--ink2); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; white-space: nowrap; }
+.cty-other[aria-pressed='true'] { color: #fff8ec; background: var(--shu); border-radius: 8px; padding: 2px 8px; text-decoration: none; }
+@media (orientation: portrait) {
+  .lang-bar { margin-right: 36px; gap: 4px; }
+  .lang-bar button, .cty-bar button { min-height: 44px; font-size: 15px; }
+  /* five native names in one row on a phone held upright (English / 简体中文 / 繁體中文 the widest) */
+  .lang-bar button { font-size: 13px; padding: 0 1px; letter-spacing: -0.02em; text-overflow: clip; }
+  .cty-other { font-size: 13px; }
+}
+
+/* 0.7 grill timers: the time on the coals and the 目安 for each face */
+/* the panel gives way to the step buttons on short screens (with the explanation open it scrolls instead of
+   pushing 返す / たれへ off the bottom) */
+#meter { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+#actions { flex: none; }
+.m-title.tm { align-items: center; }
+.m-title.tm b { font-variant-numeric: tabular-nums; }
+.tm-help { flex: none; width: max(22px, calc(var(--u) * 4.6)); height: max(22px, calc(var(--u) * 4.6)); border-radius: 50%; border: max(2px, calc(var(--u) * 0.4)) solid var(--line); background: #fffdf8; color: var(--ink2); font: inherit; font-weight: 900; font-size: max(12px, calc(var(--u) * 2.7)); line-height: 1; padding: 0; cursor: pointer; }
+.tm-sub { margin: 0 0 calc(var(--u) * 0.8); font-size: max(10.5px, calc(var(--u) * 2.4)); color: var(--ink2); font-weight: 800; }
+.tm-sub:empty { display: none; }
+.face.tm { grid-template-columns: auto auto 1fr; row-gap: 0; column-gap: calc(var(--u) * 0.9); }
+.face.tm .tt { font-size: max(13px, calc(var(--u) * 3.3)); color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+/* each face's 目安 on its own line under its clock */
+.face.tm .tg { grid-column: 1 / -1; justify-self: end; margin: 0 0 calc(var(--u) * 0.6); font-size: max(10.5px, calc(var(--u) * 2.4)); color: var(--ink2); font-weight: 800; white-space: nowrap; line-height: 1.2; }
+.face.tm .tg:empty { display: none; }
+.dipm .tg { grid-column: 1 / -1; justify-self: end; font-size: max(10.5px, calc(var(--u) * 2.4)); color: var(--ink2); font-weight: 800; white-space: nowrap; }
+.dipm .tg:empty { display: none; }
+.tm-game { margin: calc(var(--u) * 0.4) 0 0; font-size: max(9.5px, calc(var(--u) * 2.1)); color: var(--ink2); font-weight: 700; opacity: 0.8; text-align: right; }
+.tm-note { margin: calc(var(--u) * 1) 0 0; font-size: max(10.5px, calc(var(--u) * 2.4)); line-height: 1.45; color: var(--ink2); font-weight: 700; }
+.res-time { margin: 0; font-size: max(11.5px, calc(var(--u) * 2.6)); font-weight: 800; color: var(--ink2); text-align: center; }
+.res-time:empty { display: none; }
