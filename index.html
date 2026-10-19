@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<link rel="stylesheet" href="style.css?v=0.7.1-202610182102">
+<link rel="stylesheet" href="style.css?v=0.7.2-202610190816">
 <script>
   // before the game script: the page language (saved choice, else the browser's) so the loading
   // screen and any load error already read in it
@@ -138,6 +138,9 @@
         <div id="recRow" class="f-rec" hidden>
           <label class="rec-opt" for="recOpt"><input id="recOpt" type="checkbox"><span data-i18n="rec.opt"></span></label>
           <p class="rec-note" data-i18n="rec.note"></p>
+          <!-- the full notice (kept 180 days, contact): folded under a small toggle, opened only by the player -->
+          <button id="recMore" type="button" class="rec-more" aria-expanded="false" aria-controls="recDetail"><span data-i18n="rec.more"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <p id="recDetail" class="rec-detail" data-i18n="rec.detail" hidden></p>
         </div>
         <p id="entryErr" class="f-err" role="alert"></p>
         <button id="startBtn" type="submit" class="btn big start" data-i18n="title.start"></button>
@@ -247,6 +250,6 @@
   };
   setTimeout(function () { window.__bootFail(); }, 20000);
 </script>
-<script src="game.js?v=0.7.1-202610182102" onerror="window.__bootFail(window.__bootMsg[2])"></script>
+<script src="game.js?v=0.7.2-202610190816" onerror="window.__bootFail(window.__bootMsg[2])"></script>
 </body>
 </html>

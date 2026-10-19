@@ -1075,12 +1075,24 @@ html.rotated { --l: env(safe-area-inset-top, 0px); --r: env(safe-area-inset-bott
 .rec-opt { display: flex; align-items: center; gap: max(8px, calc(var(--u) * 1.4)); font-size: max(13px, calc(var(--u) * 2.9)); font-weight: 900; color: var(--ink); cursor: pointer; min-height: 32px; }
 .rec-opt input { width: max(20px, calc(var(--u) * 4)); height: max(20px, calc(var(--u) * 4)); margin: 0; accent-color: var(--shu); flex: none; }
 .rec-note { margin: 0; font-size: max(10px, calc(var(--u) * 2.1)); line-height: 1.4; color: var(--ink2); font-weight: 700; opacity: 0.9; }
+/* the notice is in the device font: its wording (the shop's name, 削除・問い合わせ…) is not in the game font's subset */
+.rec-note, .rec-more, .rec-detail { font-family: var(--font-sys, inherit); }
+/* Japanese plain prose, not phrase-spaced UI text: wrap between any characters (keep-all broke the notice only at
+   punctuation). Korean keeps keep-all (its words are spaced), Chinese and English already wrap normally. */
+html[data-lang='ja'] .rec-note, html[data-lang='ja'] .rec-detail { word-break: normal; line-break: auto; }
+.rec-more { justify-self: start; display: inline-flex; align-items: center; gap: 0.25em; min-height: 36px; padding: 0 2px; background: none; border: 0; font-size: max(12px, calc(var(--u) * 2.4)); font-weight: 800; color: var(--shu-d); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; text-align: left; }
+.rec-more svg { flex: none; width: 1.1em; height: 1.1em; transition: transform 0.15s; }
+.rec-more[aria-expanded='true'] svg { transform: rotate(180deg); }
+.rec-detail { margin: 0; padding: max(6px, calc(var(--u) * 1.1)) max(8px, calc(var(--u) * 1.6)); border-radius: max(8px, calc(var(--u) * 1.4)); background: #fff8ec; border: 1px solid var(--line); font-size: max(11px, calc(var(--u) * 2.2)); line-height: 1.55; color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.rec-detail[hidden] { display: none; }
 .stamp .res-rec { grid-column: 1 / -1; letter-spacing: 0.04em; font-weight: 700; color: var(--ink2); }
 .stamp .res-rec[data-state='ok'] { color: #3d6b2a; }
 .stamp .res-rec[hidden] { display: none; }
 @media (orientation: portrait) {
   .rec-opt { font-size: 15px; }
   .rec-note { font-size: 11.5px; }
+  .rec-more { font-size: 13px; }
+  .rec-detail { font-size: 12.5px; }
 }
 
 /* ---------- opened inside an app (LINE, Instagram…): how to open in Safari / the browser (advice only) ---------- */
