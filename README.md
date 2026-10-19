@@ -5,7 +5,7 @@
 ログイン不要・インストール不要。スマホ（横向き）やパソコンのブラウザで、そのまま遊べます。
 No login, nothing to install: open the link in a phone (landscape) or desktop browser.
 
-- バージョン / Version: 0.7.3（build 0.7.3-202610191121）
+- バージョン / Version: 0.8.0（build 0.8.0-202610191606）
 - 言語 / Languages: 日本語 · English · 한국어 · 简体中文 · 繁體中文（ブラウザの言語で始まり、タイトルで切り替えられます）
 - 1回 約2分 / about 2 minutes a round
 
@@ -25,8 +25,8 @@ Drag and tap only.
 
 ## データについて / Your data
 
-「集計に参加する（任意）」にチェックしたプレイだけ、店舗ごとの集計のため、ニックネーム（本名でなくてよい）・国／地域・お店・ゲームの開始と完了の日時・ゲームの版を集計サーバー（play-collector.hashimoshi15.workers.dev）へ送ります。本名・メールアドレス・電話番号・位置情報・広告ID・IPアドレスは保存しません。記録は集計にだけ使い、公開しません（ランキング・解析タグはありません）。保存期間は受信から 180 日で、過ぎた記録は自動で削除します。お問い合わせ: うな和の店頭スタッフ。チェックしなければ何も送りません。
-Only for plays where the player ticks "Join the tally (optional)": for the per-shop tally the nickname (no real name needed), country / region, shop, the start and finish time and the game version are sent to the tally server (play-collector.hashimoshi15.workers.dev). No real name, email address, phone number, location, advertising ID or IP address is stored. Records are used only for totals and never published (no ranking, no analytics). They are kept for 180 days from receipt and then deleted automatically. Questions: the staff at Unawa (うな和). Without the tick nothing is sent.
+参加の操作なしで、店舗ごとの集計のため、ゲームの開始と完了の日時・完了時の点数・お店・選んだ国／地域（「その他・回答しない」なら送りません）・ゲームの版を集計サーバー（play-collector.hashimoshi15.workers.dev）へ自動で送ります。**ニックネームは送りません**（画面の表示にだけ使います）。本名・メールアドレス・電話番号・位置情報・広告ID・端末ID・IPアドレスは保存せず、cookie も使いません。記録はプレイの回数の集計にだけ使い、公開しません（ランキング・解析タグはありません）。保存期間は受信から 180 日で、過ぎた記録は自動で削除します。お問い合わせ: うな和の店頭スタッフ。最初の画面の「くわしく」から、その端末での集計を止められます（止めても遊べます）。
+Without anything to tick, for the per-shop tally the game sends when a play starts and finishes, the score at the end, the shop, the country / region chosen (nothing for "Other / prefer not to say") and the game version to the tally server (play-collector.hashimoshi15.workers.dev). **The nickname is never sent** (it is only shown on the screen). No real name, email address, phone number, location, advertising ID, device ID or IP address is stored, and no cookies are used. Records are used only to count plays and never published (no ranking, no analytics). They are kept for 180 days from receipt and then deleted automatically. Questions: the staff at Unawa (うな和). The tally can be stopped on a device from "Details" on the first screen (the game stays playable).
 
 ## 公開のしかた / Publishing (maintainers)
 
