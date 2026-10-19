@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<link rel="stylesheet" href="style.css?v=0.7.2-202610190816">
+<link rel="stylesheet" href="style.css?v=0.7.3-202610191121">
 <script>
   // before the game script: the page language (saved choice, else the browser's) so the loading
   // screen and any load error already read in it
@@ -45,6 +45,8 @@
 </script>
 </head>
 <body>
+<!-- the visible area, measured by frame.js (a fixed, inset: 0 box: never drawn) -->
+<div id="vp" aria-hidden="true"></div>
 <div id="app">
   <canvas id="gl" data-i18n-aria="aria.gl"></canvas>
   <div id="vig" aria-hidden="true"></div>
@@ -250,6 +252,6 @@
   };
   setTimeout(function () { window.__bootFail(); }, 20000);
 </script>
-<script src="game.js?v=0.7.2-202610190816" onerror="window.__bootFail(window.__bootMsg[2])"></script>
+<script src="game.js?v=0.7.3-202610191121" onerror="window.__bootFail(window.__bootMsg[2])"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@
 ログイン不要・インストール不要。スマホ（横向き）やパソコンのブラウザで、そのまま遊べます。
 No login, nothing to install: open the link in a phone (landscape) or desktop browser.
 
-- バージョン / Version: 0.7.2（build 0.7.2-202610190816）
+- バージョン / Version: 0.7.3（build 0.7.3-202610191121）
 - 言語 / Languages: 日本語 · English · 한국어 · 简体中文 · 繁體中文（ブラウザの言語で始まり、タイトルで切り替えられます）
 - 1回 約2分 / about 2 minutes a round
 
