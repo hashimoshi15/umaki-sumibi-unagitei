@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<link rel="stylesheet" href="style.css?v=0.8.0-202610191606">
+<link rel="stylesheet" href="style.css?v=0.8.1-202610210025">
 <script>
   // before the game script: the page language (saved choice, else the browser's) so the loading
   // screen and any load error already read in it
@@ -222,19 +222,47 @@
         <small id="resRec" class="res-rec" hidden></small>
         <b id="resTitle"></b>
         <div class="score"><strong id="resScore"></strong><span id="resStars" aria-hidden="true"></span><span id="resBest" hidden></span></div>
+        <!-- 0.8.1: on the final result, a line to show the score at the counter (the 3-dish challenge: its total, big) -->
+        <p id="resStaff" class="res-staff" hidden><span id="resStaffN" class="staff-n" hidden></span><span id="resStaffTxt"></span></p>
       </div>
       <ul id="cats"></ul>
       <!-- the player's own timing: time on the coals for 白焼き and たれ焼き, and how that moment turned out -->
       <p id="resTime" class="res-time"></p>
       <div class="say-row"><img id="resUmaki" src="assets/umaki/happy.webp" alt="" draggable="false"><p><b data-i18n="res.good"></b><span id="resGood"></span></p></div>
-      <p class="tip"><b data-i18n="res.tip"></b><span id="resTip"></span></p>
+      <!-- under the tip, when the lowest category is low and the tip is not about it: its own cause and next step -->
+      <p class="tip"><b data-i18n="res.tip"></b><span id="resTip"></span><span id="resLow" class="low" hidden><b id="resLowLbl"></b><span id="resLowTxt"></span></span></p>
       <div id="resChal" hidden></div>
       </div>
       <button id="resMore" type="button" class="res-more" hidden data-i18n-aria="res.moreAria"><span data-i18n="res.more"></span></button>
+      <!-- 0.8.1: the player's own post on X: an ordinary link to X's composer (score and the public page filled in), opened
+           in a new tab without a referrer only when pressed; on the final result only (src/share.js) -->
+      <!-- 0.8.1: the final result's square picture (Instagram and the like): a preview to save, copy the caption or share
+           from (src/card.js); nothing leaves the page until the player saves or shares it -->
+      <div id="shareRow" class="share-row" hidden>
+        <a id="shareX" class="btn sub share-x" hidden target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-i18n-aria="share.aria"><b aria-hidden="true">𝕏</b><span data-i18n="share.btn"></span></a>
+        <button id="cardBtn" type="button" class="btn sub share-ig" data-i18n-aria="card.aria"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="17.2" cy="6.8" r="1.3" fill="currentColor"/></svg><span data-i18n="card.btn"></span></button>
+      </div>
       <div class="row">
         <button id="nextBtn" class="btn big" hidden data-i18n="res.next"></button>
         <button id="againBtn" class="btn big"></button>
         <button id="resTitleBtn" class="btn sub" data-i18n="res.toTitle"></button>
+      </div>
+    </div>
+    <div id="cardDlg" class="card-dlg" hidden role="dialog" aria-modal="true" aria-labelledby="cardHead">
+      <div class="card-box">
+        <div class="card-pic"><img id="cardImg" alt="" hidden><p id="cardMaking" class="card-making" data-i18n="card.making"></p></div>
+        <div class="card-side">
+          <h2 id="cardHead" data-i18n="card.head"></h2>
+          <div class="card-btns">
+            <button id="cardShare" type="button" class="btn" hidden disabled><span data-i18n="card.share"></span></button>
+            <a id="cardSave" class="btn sub" aria-disabled="true"><span data-i18n="card.save"></span></a>
+            <button id="cardCopy" type="button" class="btn sub" disabled><span data-i18n="card.copy"></span></button>
+          </div>
+          <p id="cardMsg" class="card-msg" role="status" aria-live="polite"></p>
+          <textarea id="cardText" class="card-text" readonly hidden rows="3"></textarea>
+          <p class="card-how" data-i18n="card.how"></p>
+          <button id="cardClose" type="button" class="btn sub card-close"><span data-i18n="card.close"></span></button>
+        </div>
       </div>
     </div>
   </section>
@@ -257,6 +285,6 @@
   };
   setTimeout(function () { window.__bootFail(); }, 20000);
 </script>
-<script src="game.js?v=0.8.0-202610191606" onerror="window.__bootFail(window.__bootMsg[2])"></script>
+<script src="game.js?v=0.8.1-202610210025" onerror="window.__bootFail(window.__bootMsg[2])"></script>
 </body>
 </html>
